@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AGUDAS, LLANAS O ESDRÚJULAS</title>
+<style>
+  @font-face {
+    font-family: 'Escolar';
+    src: url('Escolar_N.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Escolar', 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #1a237e;
+    overflow-x: hidden;
+  }
+
+  header {
+    width: 100%;
+    background: linear-gradient(90deg, #0288d1, #0277bd);
+    color: white;
+    text-align: center;
+    padding: 16px 50px 16px 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Icono pantalla completa en esquina */
+  #btnFullscreen {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    border: 2px solid white;
+    color: white;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    min-width: unset;
+    min-height: unset;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  #btnFullscreen:active {
+    transform: scale(0.92);
+    background: rgba(255,255,255,0.4);
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 12px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: clamp(1.15rem, 4vw, 1.45rem);
+    padding: 18px 26px;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+    min-height: 64px;
+    min-width: 140px;
+  }
+
+  .btn:active {
+    transform: scale(0.95);
+  }
+
+  .btn-primary { background: #ff9800; color: white; }
+  .btn-success { background: #4caf50; color: white; }
+  .btn-danger { background: #f44336; color: white; }
+  .btn-info { background: #2196f3; color: white; }
+  .btn-secondary { background: #607d8b; color: white; }
+  .btn-purple { background: #9c27b0; color: white; }
+  .btn-teal { background: #009688; color: white; }
+
+  .mode-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mode-btn {
+    background: #fff;
+    color: #0277bd;
+    border: 4px solid #0277bd;
+  }
+
+  .mode-btn.active {
+    background: #0277bd;
+    color: white;
+  }
+
+  .main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 1000px;
+    padding: 10px 14px 40px;
+  }
+
+  .score-bar {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 560px;
+    margin: 10px 0 20px;
+    font-size: clamp(1.25rem, 4vw, 1.55rem);
+    font-weight: bold;
+  }
+
+  .score-item {
+    background: white;
+    padding: 12px 22px;
+    border-radius: 16px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  }
+
+  .instruction {
+    font-size: clamp(1.35rem, 4.5vw, 1.8rem);
+    text-align: center;
+    margin: 10px 0 18px;
+    min-height: 2.4em;
+    font-weight: bold;
+    color: #01579b;
+  }
+
+  .word-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+    min-height: 140px;
+    align-items: center;
+  }
+
+  .syllable {
+    font-size: clamp(3.2rem, 13vw, 6.2rem);
+    padding: 16px 22px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 6px solid transparent;
+    user-select: none;
+    line-height: 1.1;
+  }
+
+  .syllable:active {
+    transform: scale(0.92);
+  }
+
+  .syllable.selected {
+    border-color: #ff9800;
+    background: #fff3e0;
+    transform: scale(1.08);
+  }
+
+  .syllable.correct {
+    border-color: #4caf50;
+    background: #e8f5e9;
+    animation: bounce 0.5s;
+  }
+
+  .syllable.wrong {
+    border-color: #f44336;
+    background: #ffebee;
+    animation: shake 0.4s;
+  }
+
+  .type-buttons, .accent-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .type-btn {
+    font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+    padding: 22px 32px;
+    min-width: 160px;
+  }
+
+  .vowel-option {
+    font-size: clamp(2.2rem, 8vw, 3.6rem);
+    padding: 12px 18px;
+    margin: 6px;
+    background: white;
+    border-radius: 16px;
+    border: 5px solid #bbb;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .vowel-option:active {
+    transform: scale(0.93);
+  }
+
+  .vowel-option.selected {
+    border-color: #9c27b0;
+    background: #f3e5f5;
+  }
+
+  .result-word {
+    font-size: clamp(2.8rem, 11vw, 5rem);
+    font-weight: bold;
+    color: #1b5e20;
+    background: #c8e6c9;
+    padding: 16px 28px;
+    border-radius: 20px;
+    margin: 16px 0;
+    text-align: center;
+    animation: pop 0.5s;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  }
+
+  .feedback {
+    font-size: clamp(1.6rem, 5.5vw, 2.4rem);
+    font-weight: bold;
+    text-align: center;
+    min-height: 2.6em;
+    margin: 14px 0;
+    padding: 12px;
+    border-radius: 18px;
+    transition: all 0.3s;
+  }
+
+  .feedback.correct {
+    background: #c8e6c9;
+    color: #1b5e20;
+    animation: pop 0.5s;
+  }
+
+  .feedback.wrong {
+    background: #ffcdd2;
+    color: #b71c1c;
+    animation: shake 0.4s;
+  }
+
+  .manual-panel {
+    display: none;
+    width: 100%;
+    max-width: 560px;
+    margin: 12px 0;
+    text-align: center;
+  }
+
+  .manual-panel.active {
+    display: block;
+  }
+
+  .manual-panel input {
+    font-family: inherit;
+    font-size: 1.6rem;
+    padding: 16px;
+    width: 92%;
+    max-width: 400px;
+    border: 4px solid #0288d1;
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  .hidden { display: none !important; }
+
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    70% { transform: scale(0.95); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .confetti {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: #ff9800;
+    top: -20px;
+    animation: fall 2s linear forwards;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 1rem;
+    color: #546e7a;
+  }
+
+  @media (max-width: 600px) {
+    .syllable {
+      padding: 12px 14px;
+    }
+    .type-btn {
+      min-width: 130px;
+      padding: 18px 20px;
+    }
+    #btnFullscreen {
+      width: 42px;
+      height: 42px;
+      font-size: 1.4rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>AGUDAS, LLANAS O ESDRÚJULAS</h1>
+    <button id="btnFullscreen" title="Pantalla completa">⛶</button>
+  </header>
+
+  <div class="controls">
+    <div class="mode-selector">
+      <button class="btn mode-btn active" data-mode="normal">Modo Normal</button>
+      <button class="btn mode-btn" data-mode="hard">Modo Difícil</button>
+      <button class="btn mode-btn" data-mode="manual">Modo Manual</button>
+    </div>
+    <button class="btn btn-primary" id="btnNew">Nueva palabra</button>
+  </div>
+
+  <div class="main-area">
+    <div class="score-bar">
+      <div class="score-item">Aciertos: <span id="scoreCorrect">0</span></div>
+      <div class="score-item">Fallos: <span id="scoreWrong">0</span></div>
+    </div>
+
+    <div class="manual-panel" id="manualPanel">
+      <input type="text" id="manualInput" placeholder="Escribe la palabra..." autocomplete="off" autocapitalize="off">
+      <br><br>
+      <button class="btn btn-teal" id="btnManualOk">Usar esta palabra</button>
+      <p style="font-size:1.1rem; color:#555; margin-top:10px;">Si la palabra está en la base se usará la información correcta.<br>Si no, se separará en sílabas automáticamente (aprox.).</p>
+    </div>
+
+    <div class="instruction" id="instruction">Toca la sílaba tónica</div>
+
+    <div class="word-container" id="wordContainer"></div>
+
+    <!-- Orden solicitado: Esdrújula - Llana - Aguda -->
+    <div class="type-buttons hidden" id="typeButtons">
+      <button class="btn btn-purple type-btn" data-type="esdrujula">ESDRÚJULA</button>
+      <button class="btn btn-primary type-btn" data-type="llana">LLANA</button>
+      <button class="btn btn-success type-btn" data-type="aguda">AGUDA</button>
+    </div>
+
+    <div class="accent-buttons hidden" id="accentButtons">
+      <div id="vowelOptions" style="text-align:center; margin-bottom:14px;"></div>
+      <button class="btn btn-secondary" id="btnNoTilde">Esta palabra no lleva tilde</button>
+    </div>
+
+    <div id="resultWordArea"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <footer>Aplicación educativa · Toca las sílabas y botones · Fuente Escolar_N.TTF</footer>
+
+<script>
+// ========== SEPARADOR DE SÍLABAS EN ESPAÑOL (mejorado) ==========
+function silabear(palabra) {
+  if (!palabra) return [];
+  palabra = palabra.toLowerCase().trim();
+  // Quitar signos
+  palabra = palabra.replace(/[^a-záéíóúüñ]/gi, '');
+
+  const vocales = 'aeiouáéíóúü';
+  const fuertes = 'aeoáéó';
+  const debiles = 'iuíúü';
+
+  // Primero: detectar hiatos y diptongos de forma práctica
+  let silabas = [];
+  let i = 0;
+  const len = palabra.length;
+
+  while (i < len) {
+    let silaba = '';
+
+    // Consonantes iniciales del grupo
+    while (i < len && !vocales.includes(palabra[i])) {
+      silaba += palabra[i];
+      i++;
+    }
+
+    // Vocal(es)
+    if (i < len && vocales.includes(palabra[i])) {
+      silaba += palabra[i];
+      i++;
+
+      // Posible diptongo / triptongo
+      while (i < len && vocales.includes(palabra[i])) {
+        const prev = silaba[silaba.length - 1];
+        const curr = palabra[i];
+
+        // Hiato: dos fuertes o fuerte + débil acentuada
+        const esHiato = (fuertes.includes(prev) && fuertes.includes(curr)) ||
+                        (fuertes.includes(prev) && (curr === 'í' || curr === 'ú')) ||
+                        ((prev === 'í' || prev === 'ú') && fuertes.includes(curr));
+
+        if (esHiato) {
+          break; // nueva sílaba
+        } else {
+          // Diptongo o triptongo
+          silaba += curr;
+          i++;
+        }
+      }
+    }
+
+    // Consonantes finales del grupo (hasta siguiente vocal o fin)
+    // Regla práctica: si hay 1 consonante va a la siguiente; si hay 2+ se reparte
+    let consonantes = '';
+    let j = i;
+    while (j < len && !vocales.includes(palabra[j])) {
+      consonantes += palabra[j];
+      j++;
+    }
+
+    if (consonantes.length === 0) {
+      // fin
+    } else if (j >= len) {
+      // Final de palabra: todas van a esta sílaba
+      silaba += consonantes;
+      i = j;
+    } else if (consonantes.length === 1) {
+      // Una sola: va a la siguiente sílaba
+      // (no la añadimos ahora)
+    } else {
+      // Dos o más: la última va a la siguiente, el resto a esta
+      // Excepciones comunes de grupos inseparables: bl, br, cl, cr, dr, fl, fr, gl, gr, pl, pr, tr, ch, ll, rr
+      const inseparables = ['bl','br','cl','cr','dr','fl','fr','gl','gr','pl','pr','tr','ch','ll','rr','qu','gu'];
+      let sep = consonantes.length - 1;
+
+      // Comprobar si las dos últimas forman grupo inseparable
+      if (consonantes.length >= 2) {
+        const ultimas2 = consonantes.slice(-2);
+        if (inseparables.includes(ultimas2)) {
+          sep = consonantes.length - 2;
+        }
+      }
+
+      silaba += consonantes.slice(0, sep);
+      // Las restantes se dejarán para la siguiente iteración (ajustando i)
+      i = i + sep;
+    }
+
+    if (silaba) silabas.push(silaba);
+  }
+
+  // Limpieza final
+  return silabas.filter(s => s.length > 0);
+}
+
+// ========== BASE DE DATOS (misma estructura, se mantiene) ==========
+const WORD_DB = [
+  {w:"café", s:["ca","fé"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"camión", s:["ca","mión"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"corazón", s:["co","ra","zón"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"canción", s:["can","ción"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"avión", s:["a","vión"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"balcón", s:["bal","cón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"limón", s:["li","món"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"melón", s:["me","lón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"ratón", s:["ra","tón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"jamón", s:["ja","món"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"sofá", s:["so","fá"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"menú", s:["me","nú"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"bebé", s:["be","bé"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"mamá", s:["ma","má"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"papá", s:["pa","pá"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"rubí", s:["ru","bí"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"colibrí", s:["co","li","brí"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"interés", s:["in","te","rés"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"inglés", s:["in","glés"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"francés", s:["fran","cés"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"compás", s:["com","pás"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"después", s:["des","pués"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"jamás", s:["ja","más"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"autobús", s:["au","to","bús"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"adiós", s:["a","diós"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"reloj", s:["re","loj"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"papel", s:["pa","pel"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"pared", s:["pa","red"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"hotel", s:["ho","tel"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"doctor", s:["doc","tor"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"color", s:["co","lor"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"animal", s:["a","ni","mal"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"calor", s:["ca","lor"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"verdad", s:["ver","dad"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"ciudad", s:["ciu","dad"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"final", s:["fi","nal"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"pastel", s:["pas","tel"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"sabor", s:["sa","bor"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"motor", s:["mo","tor"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"tractor", s:["trac","tor"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"comer", s:["co","mer"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"cantar", s:["can","tar"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"correr", s:["co","rrer"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"vivir", s:["vi","vir"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"escribir", s:["es","cri","bir"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"dibujar", s:["di","bu","jar"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"estudiar", s:["es","tu","diar"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"jugar", s:["ju","gar"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"saltar", s:["sal","tar"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"bailar", s:["bai","lar"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"feliz", s:["fe","liz"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"capaz", s:["ca","paz"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"raíz", s:["ra","íz"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"país", s:["pa","ís"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"baúl", s:["ba","úl"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"raúl", s:["ra","úl"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"acción", s:["ac","ción"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"lección", s:["lec","ción"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"presión", s:["pre","sión"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"sillón", s:["si","llón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"cajón", s:["ca","jón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"colchón", s:["col","chón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"calcetín", s:["cal","ce","tín"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"jardín", s:["jar","dín"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"botón", s:["bo","tón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"dragón", s:["dra","gón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"león", s:["le","ón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"casa", s:["ca","sa"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"mesa", s:["me","sa"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"libro", s:["li","bro"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"coche", s:["co","che"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"perro", s:["pe","rro"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"gato", s:["ga","to"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"niño", s:["ni","ño"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"niña", s:["ni","ña"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"escuela", s:["es","cue","la"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"colegio", s:["co","le","gio"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"ventana", s:["ven","ta","na"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"puerta", s:["puer","ta"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"silla", s:["si","lla"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"lápiz", s:["lá","piz"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"árbol", s:["ár","bol"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"fácil", s:["fá","cil"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"difícil", s:["di","fí","cil"], t:1, tipo:"llana", tilde:true, tildeSyl:1},
+  {w:"ángel", s:["án","gel"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"cárcel", s:["cár","cel"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"césped", s:["cés","ped"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"mármol", s:["már","mol"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"útil", s:["ú","til"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"débil", s:["dé","bil"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"hábil", s:["há","bil"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"móvil", s:["mó","vil"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"túnel", s:["tú","nel"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"azúcar", s:["a","zú","car"], t:1, tipo:"llana", tilde:true, tildeSyl:1},
+  {w:"álbum", s:["ál","bum"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"cómic", s:["có","mic"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"póster", s:["pós","ter"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"examen", s:["e","xa","men"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"joven", s:["jo","ven"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"lunes", s:["lu","nes"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"martes", s:["mar","tes"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"jueves", s:["jue","ves"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"tarde", s:["tar","de"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"espejo", s:["es","pe","jo"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"carpeta", s:["car","pe","ta"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"camino", s:["ca","mi","no"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"playa", s:["pla","ya"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"montaña", s:["mon","ta","ña"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"comida", s:["co","mi","da"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"nube", s:["nu","be"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"bosque", s:["bos","que"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"puente", s:["puen","te"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"pelota", s:["pe","lo","ta"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"amigo", s:["a","mi","go"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"familia", s:["fa","mi","lia"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"profesor", s:["pro","fe","sor"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"alumno", s:["a","lum","no"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"cuaderno", s:["cua","der","no"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"mochila", s:["mo","chi","la"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"borrador", s:["bo","rra","dor"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"regla", s:["re","gla"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"tijeras", s:["ti","je","ras"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"pintura", s:["pin","tu","ra"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"colores", s:["co","lo","res"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"número", s:["nú","me","ro"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"pájaro", s:["pá","ja","ro"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"música", s:["mú","si","ca"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"teléfono", s:["te","lé","fo","no"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"médico", s:["mé","di","co"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"sábado", s:["sá","ba","do"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"miércoles", s:["miér","co","les"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"brújula", s:["brú","ju","la"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"esdrújula", s:["es","drú","ju","la"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"práctico", s:["prác","ti","co"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"matemática", s:["ma","te","má","ti","ca"], t:2, tipo:"esdrujula", tilde:true, tildeSyl:2},
+  {w:"química", s:["quí","mi","ca"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"física", s:["fí","si","ca"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"lógico", s:["ló","gi","co"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"histórico", s:["his","tó","ri","co"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"micrófono", s:["mi","cró","fo","no"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"kilómetro", s:["ki","ló","me","tro"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"semáforo", s:["se","má","fo","ro"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"público", s:["pú","bli","co"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"página", s:["pá","gi","na"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"rápido", s:["rá","pi","do"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"plástico", s:["plás","ti","co"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"cámara", s:["cá","ma","ra"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"lágrima", s:["lá","gri","ma"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"máquina", s:["má","qui","na"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"cómodo", s:["có","mo","do"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"último", s:["úl","ti","mo"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"próximo", s:["pró","xi","mo"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"sílaba", s:["sí","la","ba"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"fantástico", s:["fan","tás","ti","co"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"magnífico", s:["mag","ní","fi","co"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"simpático", s:["sim","pá","ti","co"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"bolígrafo", s:["bo","lí","gra","fo"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"círculo", s:["cír","cu","lo"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"triángulo", s:["tri","án","gu","lo"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"rectángulo", s:["rec","tán","gu","lo"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"plátano", s:["plá","ta","no"], t:0, tipo:"esdrujula", tilde:true, tildeSyl:0},
+  {w:"sandía", s:["san","dí","a"], t:1, tipo:"llana", tilde:true, tildeSyl:1},
+  {w:"fútbol", s:["fút","bol"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"frío", s:["frí","o"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"vacío", s:["va","cí","o"], t:1, tipo:"llana", tilde:true, tildeSyl:1},
+  {w:"río", s:["rí","o"], t:0, tipo:"llana", tilde:true, tildeSyl:0},
+  {w:"detrás", s:["de","trás"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"habitación", s:["ha","bi","ta","ción"], t:3, tipo:"aguda", tilde:true, tildeSyl:3},
+  {w:"salón", s:["sa","lón"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"televisión", s:["te","le","vi","sión"], t:3, tipo:"aguda", tilde:true, tildeSyl:3},
+  {w:"natación", s:["na","ta","ción"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"oír", s:["o","ír"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"reír", s:["re","ír"], t:1, tipo:"aguda", tilde:true, tildeSyl:1},
+  {w:"sonreír", s:["son","re","ír"], t:2, tipo:"aguda", tilde:true, tildeSyl:2},
+  {w:"estómago", s:["es","tó","ma","go"], t:1, tipo:"esdrujula", tilde:true, tildeSyl:1},
+  {w:"manzana", s:["man","za","na"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"naranja", s:["na","ran","ja"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"cabeza", s:["ca","be","za"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"oreja", s:["o","re","ja"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"amarillo", s:["a","ma","ri","llo"], t:2, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"pequeño", s:["pe","que","ño"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"contento", s:["con","ten","to"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"abierto", s:["a","bier","to"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"cerrado", s:["ce","rra","do"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"caliente", s:["ca","lien","te"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"pesado", s:["pe","sa","do"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"ligero", s:["li","ge","ro"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"oscuro", s:["os","cu","ro"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"arriba", s:["a","rri","ba"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"abajo", s:["a","ba","jo"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"delante", s:["de","lan","te"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"mañana", s:["ma","ña","na"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"semana", s:["se","ma","na"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"minuto", s:["mi","nu","to"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"segundo", s:["se","gun","do"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"enero", s:["e","ne","ro"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"febrero", s:["fe","bre","ro"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"abril", s:["a","bril"], t:1, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"agosto", s:["a","gos","to"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"septiembre", s:["sep","tiem","bre"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"octubre", s:["oc","tu","bre"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"noviembre", s:["no","viem","bre"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"diciembre", s:["di","ciem","bre"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"domingo", s:["do","min","go"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"primavera", s:["pri","ma","ve","ra"], t:2, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"verano", s:["ve","ra","no"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"otoño", s:["o","to","ño"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"invierno", s:["in","vier","no"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"lluvia", s:["llu","via"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"nieve", s:["nie","ve"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"viento", s:["vien","to"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"trueno", s:["true","no"], t:0, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"desierto", s:["de","sier","to"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"cocina", s:["co","ci","na"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"dormitorio", s:["dor","mi","to","rio"], t:2, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"armario", s:["ar","ma","rio"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"escalera", s:["es","ca","le","ra"], t:2, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"ascensor", s:["as","cen","sor"], t:2, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"ordenador", s:["or","de","na","dor"], t:3, tipo:"aguda", tilde:false, tildeSyl:-1},
+  {w:"pantalla", s:["pan","ta","lla"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"teclado", s:["te","cla","do"], t:1, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"impresora", s:["im","pre","so","ra"], t:2, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"baloncesto", s:["ba","lon","ces","to"], t:2, tipo:"llana", tilde:false, tildeSyl:-1},
+  {w:"deporte", s:["de","por","te"], t:1, tipo:"llana", tilde:false, tildeSyl:-1}
+];
+
+// Eliminar duplicados
+const uniqueWords = [];
+const seen = new Set();
+for (const item of WORD_DB) {
+  const key = item.w.toLowerCase();
+  if (!seen.has(key)) {
+    seen.add(key);
+    uniqueWords.push(item);
+  }
+}
+
+// ========== ESTADO ==========
+let mode = 'normal';
+let shuffled = [];
+let currentIndex = 0;
+let currentWord = null;
+let step = 'tonic';
+let selectedTonic = -1;
+let scoreCorrect = 0;
+let scoreWrong = 0;
+let isManual = false;
+let manualWordData = null;
+let lastAccentedWord = ''; // para mostrar la palabra con tilde
+
+// ========== DOM ==========
+const wordContainer = document.getElementById('wordContainer');
+const instruction = document.getElementById('instruction');
+const typeButtons = document.getElementById('typeButtons');
+const accentButtons = document.getElementById('accentButtons');
+const vowelOptions = document.getElementById('vowelOptions');
+const feedback = document.getElementById('feedback');
+const resultWordArea = document.getElementById('resultWordArea');
+const scoreCorrectEl = document.getElementById('scoreCorrect');
+const scoreWrongEl = document.getElementById('scoreWrong');
+const manualPanel = document.getElementById('manualPanel');
+const manualInput = document.getElementById('manualInput');
+
+// ========== SONIDOS ==========
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, duration, type = 'sine', vol = 0.3) {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playSuccess() {
+  playTone(523.25, 0.15, 'sine', 0.25);
+  setTimeout(() => playTone(659.25, 0.15, 'sine', 0.25), 120);
+  setTimeout(() => playTone(783.99, 0.25, 'sine', 0.3), 240);
+}
+
+function playError() {
+  playTone(200, 0.2, 'sawtooth', 0.2);
+  setTimeout(() => playTone(150, 0.3, 'sawtooth', 0.2), 150);
+}
+
+function vibrateFail() {
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+}
+
+function showConfetti() {
+  const colors = ['#ff9800', '#4caf50', '#2196f3', '#e91e63', '#9c27b0', '#ffeb3b'];
+  for (let i = 0; i < 45; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+    c.style.animationDelay = Math.random() * 0.4 + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+
+function shuffle(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function stripAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+// ========== LÓGICA ==========
+function initShuffle() {
+  shuffled = shuffle(uniqueWords);
+  currentIndex = 0;
+}
+
+function nextWord() {
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  resultWordArea.innerHTML = '';
+  selectedTonic = -1;
+  step = 'tonic';
+  typeButtons.classList.add('hidden');
+  accentButtons.classList.add('hidden');
+  lastAccentedWord = '';
+
+  if (mode === 'manual') {
+    if (!manualWordData) {
+      instruction.textContent = 'Escribe una palabra y pulsa "Usar esta palabra"';
+      wordContainer.innerHTML = '';
+      return;
+    }
+    currentWord = manualWordData;
+  } else {
+    if (currentIndex >= shuffled.length) initShuffle();
+    currentWord = shuffled[currentIndex];
+    currentIndex++;
+  }
+
+  renderWord();
+  instruction.textContent = 'Toca la sílaba tónica';
+}
+
+function renderWord() {
+  wordContainer.innerHTML = '';
+  const usePlain = (mode === 'hard') || (mode === 'manual' && currentWord.fromManual);
+  const syllables = usePlain
+    ? currentWord.s.map(syl => stripAccents(syl))
+    : currentWord.s;
+
+  syllables.forEach((syl, i) => {
+    const span = document.createElement('span');
+    span.className = 'syllable';
+    span.textContent = syl;
+    span.dataset.index = i;
+    span.addEventListener('click', () => onSyllableClick(i));
+    wordContainer.appendChild(span);
+  });
+}
+
+function onSyllableClick(index) {
+  if (step !== 'tonic') return;
+
+  const syllables = wordContainer.querySelectorAll('.syllable');
+  syllables.forEach(s => s.classList.remove('selected', 'correct', 'wrong'));
+
+  selectedTonic = index;
+  syllables[index].classList.add('selected');
+
+  // En modo manual con palabra desconocida no puntuamos estrictamente
+  const strict = !(mode === 'manual' && currentWord.fromManual && !currentWord.known);
+
+  if (!strict || index === currentWord.t) {
+    syllables[index].classList.add('correct');
+    playSuccess();
+    setTimeout(() => {
+      step = 'type';
+      instruction.textContent = '¿Es esdrújula, llana o aguda?';
+      typeButtons.classList.remove('hidden');
+    }, 400);
+  } else {
+    syllables[index].classList.add('wrong');
+    playError();
+    vibrateFail();
+    scoreWrong++;
+    scoreWrongEl.textContent = scoreWrong;
+    feedback.textContent = '¡Inténtalo de nuevo! Esa no es la sílaba tónica.';
+    feedback.className = 'feedback wrong';
+    setTimeout(() => {
+      syllables[index].classList.remove('selected', 'wrong');
+      selectedTonic = -1;
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+    }, 1300);
+  }
+}
+
+// Botones de tipo (orden: esdrújula - llana - aguda)
+document.querySelectorAll('.type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (step !== 'type') return;
+    const chosen = btn.dataset.type;
+    const strict = !(mode === 'manual' && currentWord.fromManual && !currentWord.known);
+
+    if (!strict || chosen === currentWord.tipo) {
+      playSuccess();
+      if (strict) {
+        scoreCorrect++;
+        scoreCorrectEl.textContent = scoreCorrect;
+      }
+      feedback.textContent = '¡Muy bien! ¡Correcto!';
+      feedback.className = 'feedback correct';
+      showConfetti();
+
+      if (mode === 'hard' || (mode === 'manual' && currentWord.fromManual)) {
+        setTimeout(() => {
+          step = 'accent';
+          instruction.textContent = 'Toca la vocal que debe llevar tilde (o indica que no lleva)';
+          typeButtons.classList.add('hidden');
+          showAccentOptions();
+        }, 900);
+      } else {
+        setTimeout(() => nextWord(), 1300);
+      }
+    } else {
+      playError();
+      vibrateFail();
+      scoreWrong++;
+      scoreWrongEl.textContent = scoreWrong;
+      feedback.textContent = '¡Casi! Prueba otra vez.';
+      feedback.className = 'feedback wrong';
+      setTimeout(() => {
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+      }, 1300);
+    }
+  });
+});
+
+function showAccentOptions() {
+  accentButtons.classList.remove('hidden');
+  vowelOptions.innerHTML = '';
+  resultWordArea.innerHTML = '';
+
+  const plain = stripAccents(currentWord.w);
+  const vowels = 'aeiouáéíóúü';
+  let html = '';
+  for (let i = 0; i < plain.length; i++) {
+    const ch = plain[i];
+    if (vowels.includes(ch.toLowerCase())) {
+      html += `<span class="vowel-option" data-pos="${i}">${ch}</span>`;
+    } else {
+      html += `<span style="font-size:clamp(2.2rem,8vw,3.6rem);padding:6px;">${ch}</span>`;
+    }
+  }
+  vowelOptions.innerHTML = html;
+
+  vowelOptions.querySelectorAll('.vowel-option').forEach(el => {
+    el.addEventListener('click', () => {
+      vowelOptions.querySelectorAll('.vowel-option').forEach(v => v.classList.remove('selected'));
+      el.classList.add('selected');
+      checkAccent(parseInt(el.dataset.pos), el.textContent);
+    });
+  });
+}
+
+document.getElementById('btnNoTilde').addEventListener('click', () => {
+  if (step !== 'accent') return;
+  const strict = !(mode === 'manual' && currentWord.fromManual && !currentWord.known);
+
+  if (!strict || !currentWord.tilde) {
+    playSuccess();
+    if (strict) {
+      scoreCorrect++;
+      scoreCorrectEl.textContent = scoreCorrect;
+    }
+    // Mostrar la palabra final
+    const finalWord = currentWord.w;
+    resultWordArea.innerHTML = `<div class="result-word">${finalWord}</div>`;
+    feedback.textContent = '¡Perfecto! No lleva tilde.';
+    feedback.className = 'feedback correct';
+    showConfetti();
+    setTimeout(() => nextWord(), 1800);
+  } else {
+    playError();
+    vibrateFail();
+    scoreWrong++;
+    scoreWrongEl.textContent = scoreWrong;
+    feedback.textContent = 'Esta palabra sí lleva tilde. ¡Inténtalo!';
+    feedback.className = 'feedback wrong';
+  }
+});
+
+function checkAccent(pos, letter) {
+  if (step !== 'accent') return;
+  const strict = !(mode === 'manual' && currentWord.fromManual && !currentWord.known);
+
+  // Calcular posición correcta de la tilde
+  let correctPos = -1;
+  if (currentWord.tilde && currentWord.tildeSyl >= 0) {
+    let charCount = 0;
+    for (let i = 0; i < currentWord.tildeSyl; i++) {
+      charCount += stripAccents(currentWord.s[i]).length;
+    }
+    const sylPlain = stripAccents(currentWord.s[currentWord.tildeSyl]);
+    const vowels = 'aeiou';
+    for (let j = 0; j < sylPlain.length; j++) {
+      if (vowels.includes(sylPlain[j].toLowerCase())) {
+        correctPos = charCount + j;
+        break;
+      }
+    }
+  }
+
+  if (!strict || (currentWord.tilde && pos === correctPos)) {
+    playSuccess();
+    if (strict) {
+      scoreCorrect++;
+      scoreCorrectEl.textContent = scoreCorrect;
+    }
+
+    // Construir y mostrar la palabra CON la tilde
+    const plain = stripAccents(currentWord.w);
+    const accentMap = {'a':'á','e':'é','i':'í','o':'ó','u':'ú'};
+    let accented = '';
+    for (let i = 0; i < plain.length; i++) {
+      if (i === pos && accentMap[plain[i].toLowerCase()]) {
+        accented += accentMap[plain[i].toLowerCase()];
+      } else {
+        accented += plain[i];
+      }
+    }
+    // Preferir la forma original de la base de datos si existe
+    const finalDisplay = currentWord.known ? currentWord.w : accented;
+
+    resultWordArea.innerHTML = `<div class="result-word">${finalDisplay}</div>`;
+    feedback.textContent = '¡Excelente! Tilde colocada correctamente.';
+    feedback.className = 'feedback correct';
+    showConfetti();
+    setTimeout(() => nextWord(), 2000);
+  } else if (!currentWord.tilde) {
+    playError();
+    vibrateFail();
+    scoreWrong++;
+    scoreWrongEl.textContent = scoreWrong;
+    feedback.textContent = 'Esta palabra no lleva tilde.';
+    feedback.className = 'feedback wrong';
+  } else {
+    playError();
+    vibrateFail();
+    scoreWrong++;
+    scoreWrongEl.textContent = scoreWrong;
+    feedback.textContent = 'No es esa vocal. ¡Prueba otra!';
+    feedback.className = 'feedback wrong';
+  }
+}
+
+// ========== CONTROLES ==========
+document.getElementById('btnNew').addEventListener('click', () => {
+  if (mode === 'manual') {
+    manualWordData = null;
+    manualInput.value = '';
+  }
+  nextWord();
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+    isManual = mode === 'manual';
+    manualPanel.classList.toggle('active', isManual);
+    if (!isManual) {
+      manualWordData = null;
+      initShuffle();
+    }
+    nextWord();
+  });
+});
+
+document.getElementById('btnManualOk').addEventListener('click', () => {
+  let text = manualInput.value.trim().toLowerCase();
+  if (!text) return;
+
+  // Buscar en la base de datos
+  const found = uniqueWords.find(w => 
+    w.w.toLowerCase() === text || 
+    stripAccents(w.w).toLowerCase() === stripAccents(text)
+  );
+
+  if (found) {
+    manualWordData = {...found, fromManual: true, known: true};
+  } else {
+    // Separación automática mejorada
+    const silabas = silabear(text);
+    // Aproximación de tónica (llana por defecto, muy común)
+    let tIndex = Math.max(0, silabas.length - 2);
+    let tipo = 'llana';
+    if (silabas.length === 1) {
+      tIndex = 0;
+      tipo = 'aguda';
+    } else if (silabas.length >= 3) {
+      // No sabemos, dejamos llana como default
+      tipo = 'llana';
+    }
+
+    manualWordData = {
+      w: text,
+      s: silabas,
+      t: tIndex,
+      tipo: tipo,
+      tilde: /[áéíóú]/.test(text),
+      tildeSyl: 0,
+      fromManual: true,
+      known: false
+    };
+    feedback.textContent = 'Palabra nueva: sílabas automáticas. La puntuación es orientativa.';
+    feedback.className = 'feedback';
+  }
+  nextWord();
+});
+
+// Pantalla completa (icono)
+document.getElementById('btnFullscreen').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      alert('No se pudo activar pantalla completa');
+    });
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+// Inicializar
+initShuffle();
+nextWord();
+</script>
+</body>
+</html>
